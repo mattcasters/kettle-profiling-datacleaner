@@ -1,0 +1,94 @@
+<project name="kettle-profiling-datacleaner" default="default" basedir=".">
+
+	  <description>
+	      Build file for the Kettle Profiling plugin : DataCleaner
+	    </description>
+
+	  <tstamp prefix="start"/>
+
+	  <!-- system properties to use -->
+	  <property name= "cr" value="${line.separator}"/> 
+		
+	  <!-- set global properties for this build -->
+	
+	  <property name="src"        			location="src"/> 
+	  <property name="classes"        		location="classes"/> 
+	  <property name="lib"        			location="lib"/>
+	  <property name="libext"     			location="libext"/>
+	
+	  <target name="init" description="create timestamp and directories">
+    	<echo>Init...</echo>
+	  	
+	    <tstamp/>
+	    <mkdir dir="${classes}"/>
+	    <mkdir dir="${lib}"/>
+	  </target>
+
+	  <!--
+	       ==========================
+	            Compile the code
+	       ==========================
+	  -->
+
+	  <target name="compile" depends="init" description="compile the source " >
+	  	<echo>Compiling Dummy Plugin...</echo>
+	    <javac srcdir="${src}" 
+	    	   destdir="${classes}"
+	    	   debug="true"
+	    	   includeantruntime="false"
+	    	>
+
+	    	<classpath id="cpath">
+				<fileset dir="${libext}" 		includes="*.jar"/>
+		  		</classpath>
+	    </javac>
+	  </target>
+	
+	  <!-- ==========================
+	          Copy additional files
+	       ==========================
+	  -->
+
+	  <target name="copy" depends="compile" description="copy images etc to classes directory" >
+	  	<echo>Copying images etc to classes directory...</echo>
+	    <copy todir="${classes}">
+	    	<fileset 
+	    		dir="${src}" 
+	    		includes="**/*.png,**/*.xml,**/*.properties,**/*.xul"/>
+	  	    </copy>
+	  </target>
+			
+	  <!--
+	       ==========================
+	                library
+	       ==========================
+	  -->
+		
+	  <target name="library" depends="compile, copy" description="generate kettle-profiling-datacleaner.jar">
+	  	<echo>Generating library datacleaner-kettle-plugin.jar ...</echo>
+	  	<jar 
+	    	jarfile="${lib}/kettle-profiling-datacleaner.jar" 
+	    	basedir="${classes}" 
+	    	includes="**/*"/>	 
+	  </target>
+
+
+	<!--
+	       ==========================
+	          Default target: library
+	       ==========================
+	  -->
+	<target name="default" depends="library" description="default = build library"/>
+
+	<!--
+	       ==========================
+	              C L E A N
+	       ==========================
+	  -->
+
+	  <target name="clean"  description="clean up generated files" >
+	    <delete dir="${classes}"/>
+	    <delete dir="${lib}"/>
+	  </target>
+	
+</project>
